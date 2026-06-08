@@ -1,0 +1,82 @@
+{% extends "base_dashboard.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+          {% if modo == 'cadastrar' %}
+            <i class="bi bi-person-plus"></i> Cadastrar Novo Usuário
+          {% else %}
+            <i class="bi bi-pencil"></i> Editar Usuário
+          {% endif %}
+        </h5>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <h6 class="mb-3"><i class="bi bi-info-circle"></i> Dados Pessoais</h6>
+          
+          <div class="mb-3">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" name="nome" class="form-control" value="{{ item.nome if item else '' }}" required />
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">CPF</label>
+              <input type="text" name="cpf" class="form-control" value="{{ item.cpf if item else '' }}" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">E-mail</label>
+              <input type="email" name="email" class="form-control" value="{{ item.email if item else '' }}" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Celular</label>
+              <input type="text" name="celular" class="form-control" value="{{ item.celular if item else '' }}" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Estado (UF)</label>
+              <input type="text" name="estado" class="form-control" maxlength="2" value="{{ item.estado if item else '' }}" required />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Função</label>
+            <select name="funcao_id" class="form-select" required>
+              <option value="">Selecione uma função</option>
+              {% for funcao in funcoes %}
+              <option value="{{ funcao.id_funcao }}" {{ 'selected' if item and item.funcao_id == funcao.id_funcao else '' }}>
+                {{ funcao.nome }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <hr />
+          <h6 class="mb-3"><i class="bi bi-lock"></i> Segurança</h6>
+
+          <div class="mb-3">
+            <label class="form-label">Senha {{ '(deixe em branco para manter a atual)' if modo == 'editar' else '' }}</label>
+            <input type="password" name="senha" class="form-control" {{ 'required' if modo == 'cadastrar' else '' }} />
+          </div>
+
+          {% if modo == 'cadastrar' %}
+          <div class="mb-3">
+            <label class="form-label">Confirmar Senha</label>
+            <input type="password" name="confirma_senha" class="form-control" required />
+          </div>
+          {% endif %}
+
+          <div class="mt-4 d-flex justify-content-between">
+            <a href="{{ url_for('usuarios_listar') }}" class="btn btn-light">Voltar</a>
+            <button type="submit" class="btn btn-primary px-4">Salvar Usuário</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

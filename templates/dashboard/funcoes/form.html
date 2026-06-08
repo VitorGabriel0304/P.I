@@ -1,0 +1,62 @@
+{% extends "base_dashboard.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+          {% if modo == 'cadastrar' %}
+            <i class="bi bi-plus-lg"></i> Cadastrar Nova Função
+          {% else %}
+            <i class="bi bi-pencil"></i> Editar Função
+          {% endif %}
+        </h5>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label">Nome da Função</label>
+            <input type="text" name="nome" class="form-control" value="{{ item.nome if item else '' }}" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            <textarea name="descricao" class="form-control" rows="3">{{ item.descricao if item else '' }}</textarea>
+          </div>
+          
+          <div class="card bg-light border-0 mb-3">
+            <div class="card-body">
+              <h6 class="card-title mb-3"><i class="bi bi-lock"></i> Permissões</h6>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" name="gerenciar_livros" id="gerenciar_livros" 
+                  {{ 'checked' if item and item.gerenciar_livros else '' }} />
+                <label class="form-check-label" for="gerenciar_livros">
+                  Gerenciar Livros
+                </label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" name="gerenciar_usuarios" id="gerenciar_usuarios" 
+                  {{ 'checked' if item and item.gerenciar_usuarios else '' }} />
+                <label class="form-check-label" for="gerenciar_usuarios">
+                  Gerenciar Usuários
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="gerenciar_emprestimos" id="gerenciar_emprestimos" 
+                  {{ 'checked' if item and item.gerenciar_emprestimos else '' }} />
+                <label class="form-check-label" for="gerenciar_emprestimos">
+                  Gerenciar Empréstimos
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-between">
+            <a href="{{ url_for('funcoes_listar') }}" class="btn btn-light">Voltar</a>
+            <button type="submit" class="btn btn-primary px-4">Salvar Função</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

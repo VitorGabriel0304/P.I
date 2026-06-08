@@ -17,13 +17,18 @@ _pool = None
 
 def criar_pool():
     global _pool
-    if _pool is None:
-        _pool = pooling.MySQLConnectionPool(
-            pool_name='webapp_pool',
-            pool_size=5,
-            pool_reset_session=True,
-            **_DB_PARAMS
-        )
+    try:
+        if _pool is None:
+            _pool = pooling.MySQLConnectionPool(
+                pool_name='webapp_pool',
+                pool_size=5,
+                pool_reset_session=True,
+                **_DB_PARAMS
+            )
+            print('✓ Pool de conexões criado com sucesso!')
+    except Error as e:
+        print(f'✗ Erro ao criar pool: {e}')
+        raise Exception(f'Não foi possível criar o pool de conexões: {e}')
 
 def get_connection():
     try:
@@ -56,8 +61,17 @@ def execute_one(sql, params=None):
 
 def iniciar_bd():
     try:
-        conn = mysql.connector.connect(host='127.0.0.1', user='root', password='')
+        # Primeiro, conecta sem especificar banco para criar o banco
+        conn = mysql.connector.connect(
+            host='127.0.0.1',
+            user='root',
+            password='',
+            charset='utf8mb4',
+            use_pure=True
+        )
         cursor = conn.cursor()
+        
+        # Lê e executa o schema.sql
         arquivo_sql = os.path.join(os.path.dirname(__file__), 'schema.sql')
         with open(arquivo_sql, 'r', encoding='utf-8') as f:
             script_sql = f.read()
@@ -65,9 +79,15 @@ def iniciar_bd():
                 stmt = stmt.strip()
                 if stmt:
                     cursor.execute(stmt)
+        
         conn.commit()
         cursor.close()
         conn.close()
-        print('Banco e tabelas inicializadas com sucesso!')
+        print('✓ Banco de dados e tabelas inicializados com sucesso!')
+        
+        # Agora cria o pool após o banco estar pronto
+        criar_pool()
+        
     except Exception as e:
-        print(f"Erro ao inicializar o banco de dados: {e}")
+        print(f"✗ Erro ao inicializar o banco de dados: {e}")
+        raise

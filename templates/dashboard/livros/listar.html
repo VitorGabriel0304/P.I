@@ -1,0 +1,57 @@
+{% extends "base_dashboard.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-book"></i> Gestão de Livros (Vitor)</h3>
+    <div class="d-flex gap-2">
+        <form class="d-flex gap-2" method="GET">
+            <select name="categoria" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Todas Categorias</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.categoria }}" {{ 'selected' if request.args.get('categoria') == cat.categoria }}>{{ cat.categoria }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <a href="{{ url_for('livros_cadastrar') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Novo Livro</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>ISBN</th>
+                    <th>Categoria</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in dados %}
+                <tr>
+                    <td><strong>{{ item.titulo }}</strong></td>
+                    <td>{{ item.autor }}</td>
+                    <td>{{ item.isbn }}</td>
+                    <td><span class="badge bg-info text-dark">{{ item.categoria }}</span></td>
+                    <td>
+                        {% if item.status == 'Disponível' %}
+                            <span class="badge bg-success">Disponível</span>
+                        {% else %}
+                            <span class="badge bg-danger">Emprestado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('livros_editar', id=item.id_livro) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                        <a href="{{ url_for('livros_excluir', id=item.id_livro) }}" class="btn btn-danger btn-sm" onclick="return confirm('Excluir livro?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not dados %}
+                <tr><td colspan="5" class="text-center p-4 text-muted">Nenhum livro cadastrado.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

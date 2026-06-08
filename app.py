@@ -44,6 +44,197 @@ def login_required(f):
 def injetar_usuario():
     return dict(usuario_logado=session.get('usuario'))
 
+# --- Módulo Funções (Padrão Professor) ---
+@app.route('/funcoes/listar')
+@login_required
+def funcoes_listar():
+    dados = execute_query("SELECT * FROM funcoes ORDER BY nome", fetch=True)
+    return render_template('dashboard/funcoes/listar.html', dados=dados)
+
+@app.route('/funcoes/cadastrar', methods=['GET', 'POST'])
+@login_required
+def funcoes_cadastrar():
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        descricao = request.form.get('descricao', '').strip()
+        gerenciar_livros = request.form.get('gerenciar_livros') == 'on'
+        gerenciar_usuarios = request.form.get('gerenciar_usuarios') == 'on'
+        gerenciar_emprestimos = request.form.get('gerenciar_emprestimos') == 'on'
+        
+        if not nome:
+            flash('Nome da função é obrigatório!', 'danger')
+            return redirect(url_for('funcoes_cadastrar'))
+        
+        try:
+            execute_query(
+                "INSERT INTO funcoes (nome, descricao, gerenciar_livros, gerenciar_usuarios, gerenciar_emprestimos) VALUES (%s, %s, %s, %s, %s)",
+                (nome, descricao, gerenciar_livros, gerenciar_usuarios, gerenciar_emprestimos)
+            )
+            flash('Função cadastrada com sucesso!', 'success')
+            return redirect(url_for('funcoes_listar'))
+        except Exception as e:
+            flash(f'Erro ao cadastrar função: {str(e)}', 'danger')
+    
+    return render_template('dashboard/funcoes/form.html', modo='cadastrar')
+
+@app.route('/funcoes/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def funcoes_editar(id):
+    item = execute_one("SELECT * FROM funcoes WHERE id_funcao = %s", (id,))
+    if not item:
+        flash('Função não encontrada!', 'warning')
+        return redirect(url_for('funcoes_listar'))
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        descricao = request.form.get('descricao', '').strip()
+        gerenciar_livros = request.form.get('gerenciar_livros') == 'on'
+        gerenciar_usuarios = request.form.get('gerenciar_usuarios') == 'on'
+        gerenciar_emprestimos = request.form.get('gerenciar_emprestimos') == 'on'
+        
+        if not nome:
+            flash('Nome da função é obrigatório!', 'danger')
+            return redirect(url_for('funcoes_editar', id=id))
+        
+        try:
+            execute_query(
+                "UPDATE funcoes SET nome=%s, descricao=%s, gerenciar_livros=%s, gerenciar_usuarios=%s, gerenciar_emprestimos=%s WHERE id_funcao=%s",
+                (nome, descricao, gerenciar_livros, gerenciar_usuarios, gerenciar_emprestimos, id)
+            )
+            flash('Função atualizada com sucesso!', 'success')
+            return redirect(url_for('funcoes_listar'))
+        except Exception as e:
+            flash(f'Erro ao atualizar função: {str(e)}', 'danger')
+    
+    return render_template('dashboard/funcoes/form.html', modo='editar', item=item)
+
+@app.route('/funcoes/excluir/<int:id>', methods=['POST'])
+@login_required
+def funcoes_excluir(id):
+    try:
+        execute_query("DELETE FROM funcoes WHERE id_funcao = %s", (id,))
+        flash('Função removida com sucesso!', 'success')
+    except Exception as e:
+        flash(f'Erro ao remover função: {str(e)}', 'danger')
+    return redirect(url_for('funcoes_listar'))
+
+# --- Módulo Usuários (Padrão Professor) ---
+@app.route('/usuarios/listar')
+@login_required
+def usuarios_listar():
+    sql = "SELECT u.*, f.nome as funcao_nome FROM usuarios u INNER JOIN funcoes f ON u.funcao_id = f.id_funcao ORDER BY u.nome"
+    dados = execute_query(sql, fetch=True)
+    return render_template('dashboard/usuarios/listar.html', dados=dados)
+
+@app.route('/usuarios/cadastrar', methods=['GET', 'POST'])
+@login_required
+def usuarios_cadastrar():
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        cpf = request.form.get('cpf', '').strip()
+        email = request.form.get('email', '').strip()
+        celular = request.form.get('celular', '').strip()
+        estado = request.form.get('estado', '').strip()
+        funcao_id = request.form.get('funcao_id')
+        senha = request.form.get('senha', '').strip()
+        confirma_senha = request.form.get('confirma_senha', '').strip()
+        
+        # Validações
+        if not all([nome, cpf, email, celular, estado, funcao_id, senha]):
+            flash('Todos os campos são obrigatórios!', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='cadastrar', funcoes=funcoes)
+        
+        if senha != confirma_senha:
+            flash('As senhas não conferem!', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='cadastrar', funcoes=funcoes)
+        
+        if len(senha) < 6:
+            flash('Senha deve ter no mínimo 6 caracteres!', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='cadastrar', funcoes=funcoes)
+        
+        try:
+            execute_query(
+                "INSERT INTO usuarios (nome, cpf, email, celular, estado, senha, funcao_id) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (nome, cpf, email, celular, estado, generate_password_hash(senha), funcao_id)
+            )
+            flash('Usuário cadastrado com sucesso!', 'success')
+            return redirect(url_for('usuarios_listar'))
+        except Exception as e:
+            if 'Duplicate entry' in str(e):
+                flash('E-mail ou CPF já cadastrado no sistema!', 'danger')
+            else:
+                flash(f'Erro ao cadastrar usuário: {str(e)}', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='cadastrar', funcoes=funcoes)
+    
+    funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+    return render_template('dashboard/usuarios/form.html', modo='cadastrar', funcoes=funcoes)
+
+@app.route('/usuarios/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def usuarios_editar(id):
+    item = execute_one("SELECT * FROM usuarios WHERE id_usuario = %s", (id,))
+    if not item:
+        flash('Usuário não encontrado!', 'warning')
+        return redirect(url_for('usuarios_listar'))
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        cpf = request.form.get('cpf', '').strip()
+        email = request.form.get('email', '').strip()
+        celular = request.form.get('celular', '').strip()
+        estado = request.form.get('estado', '').strip()
+        funcao_id = request.form.get('funcao_id')
+        senha = request.form.get('senha', '').strip()
+        
+        if not all([nome, cpf, email, celular, estado, funcao_id]):
+            flash('Todos os campos são obrigatórios!', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='editar', item=item, funcoes=funcoes)
+        
+        try:
+            if senha:
+                if len(senha) < 6:
+                    flash('Senha deve ter no mínimo 6 caracteres!', 'danger')
+                    funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+                    return render_template('dashboard/usuarios/form.html', modo='editar', item=item, funcoes=funcoes)
+                
+                execute_query(
+                    "UPDATE usuarios SET nome=%s, cpf=%s, email=%s, celular=%s, estado=%s, funcao_id=%s, senha=%s WHERE id_usuario=%s",
+                    (nome, cpf, email, celular, estado, funcao_id, generate_password_hash(senha), id)
+                )
+            else:
+                execute_query(
+                    "UPDATE usuarios SET nome=%s, cpf=%s, email=%s, celular=%s, estado=%s, funcao_id=%s WHERE id_usuario=%s",
+                    (nome, cpf, email, celular, estado, funcao_id, id)
+                )
+            
+            flash('Usuário atualizado com sucesso!', 'success')
+            return redirect(url_for('usuarios_listar'))
+        except Exception as e:
+            if 'Duplicate entry' in str(e):
+                flash('E-mail ou CPF já cadastrado no sistema!', 'danger')
+            else:
+                flash(f'Erro ao atualizar usuário: {str(e)}', 'danger')
+            funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+            return render_template('dashboard/usuarios/form.html', modo='editar', item=item, funcoes=funcoes)
+    
+    funcoes = execute_query("SELECT * FROM funcoes WHERE status = 'Ativo' ORDER BY nome", fetch=True)
+    return render_template('dashboard/usuarios/form.html', modo='editar', item=item, funcoes=funcoes)
+
+@app.route('/usuarios/excluir/<int:id>', methods=['POST'])
+@login_required
+def usuarios_excluir(id):
+    try:
+        execute_query("DELETE FROM usuarios WHERE id_usuario = %s", (id,))
+        flash('Usuário removido com sucesso!', 'success')
+    except Exception as e:
+        flash(f'Erro ao remover usuário: {str(e)}', 'danger')
+    return redirect(url_for('usuarios_listar'))
+
 # --- Rotas Públicas ---
 @app.route('/')
 def index(): return render_template('index.html')

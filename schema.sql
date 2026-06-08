@@ -37,3 +37,17 @@ CREATE TABLE IF NOT EXISTS livros (
     status ENUM('Disponível', 'Emprestado', 'Indisponível') DEFAULT 'Disponível',
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabela de Empréstimos (Rhian)
+CREATE TABLE IF NOT EXISTS emprestimos (
+    id_emprestimo BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    livro_id BIGINT UNSIGNED NOT NULL,
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    data_retirada DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_prevista_devolucao DATETIME NOT NULL,
+    data_devolucao_real DATETIME,
+    status ENUM('Ativo', 'Devolvido') DEFAULT 'Ativo',
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_emprestimo_livro FOREIGN KEY (livro_id) REFERENCES livros (id_livro) ON DELETE CASCADE,
+    CONSTRAINT fk_emprestimo_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id_usuario) ON DELETE CASCADE
+);
