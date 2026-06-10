@@ -1,0 +1,42 @@
+{% extends "base_dashboard.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">Registrar Novo Empréstimo</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Selecionar Livro Disponível</label>
+                        <select name="livro_id" class="form-select" required>
+                            <option value="">Selecione um livro...</option>
+                            {% for l in livros %}
+                            <option value="{{ l.id_livro }}">{{ l.titulo }} ({{ l.autor }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Selecionar Usuário/Leitor</label>
+                        <select name="usuario_id" class="form-select" required>
+                            <option value="">Selecione o leitor...</option>
+                            {% for u in usuarios %}
+                            <option value="{{ u.id_usuario }}">{{ u.nome }} ({{ u.cpf }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Prazo de Devolução (Dias)</label>
+                        <input type="number" name="dias" class="form-control" value="7" min="1" max="30">
+                    </div>
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a href="{{ url_for('emprestimos_listar') }}" class="btn btn-light">Voltar</a>
+                        <button type="submit" class="btn btn-success px-4">Confirmar Empréstimo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
