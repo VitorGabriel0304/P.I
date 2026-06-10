@@ -27,12 +27,6 @@ Sistema web completo para gerenciamento de biblioteca desenvolvido com **Flask**
 # Abra XAMPP Control Panel e clique em "Start" no MySQL
 ```
 
-### 2️⃣ Clonar/Preparar o projeto
-
-```bash
-cd c:\Users\glauc\Projetos\P.I
-```
-
 ### 3️⃣ Criar ambiente virtual (primeira vez)
 
 ```bash
