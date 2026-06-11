@@ -1,13 +1,17 @@
 {% extends "base_dashboard.html" %} {% block content %}
+<!-- Estrutura principal da página inicial do painel -->
 <div class="row">
   <div class="col-md-12">
+    <!-- Card central de boas-vindas -->
     <div class="card p-5 border-0 shadow-sm text-center">
       <h1 class="display-6 fw-bold">Bem-vindo ao Painel de Controle</h1>
       <p class="text-muted">
         Gerencie o acervo de livros e os empréstimos da comunidade de forma
         integrada.
       </p>
+      <!-- Divisão para mostrar os responsáveis pelos módulos -->
       <div class="row mt-4">
+        <!-- Informação do módulo de livros -->
         <div class="col-md-6">
           <div class="p-3 bg-light rounded">
             <h5>Módulo Livros</h5>
@@ -16,6 +20,7 @@
             </p>
           </div>
         </div>
+        <!-- Informação do módulo de empréstimos -->
         <div class="col-md-6">
           <div class="p-3 bg-light rounded">
             <h5>Módulo Empréstimos</h5>

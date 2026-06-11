@@ -1,11 +1,13 @@
+/* Definição das cores principais do sistema para facilitar a manutenção */
 :root {
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --sidebar-bg: #1a1a2e;
-  --sidebar-hover: rgba(52, 152, 219, 0.2);
-  --content-bg: #f4f7f6;
+  --primary-color: #2c3e50; /* Azul escuro para textos e cabeçalhos */
+  --secondary-color: #3498db; /* Azul claro para botões e destaques */
+  --sidebar-bg: #1a1a2e; /* Cor de fundo do menu lateral */
+  --sidebar-hover: rgba(52, 152, 219, 0.2); /* Cor de destaque ao passar o mouse no menu */
+  --content-bg: #f4f7f6; /* Cor de fundo das páginas */
 }
 
+/* Configurações globais do corpo da página */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--content-bg);
@@ -13,7 +15,7 @@ body {
   display: flex;
 }
 
-/* Sidebar */
+/* Estilização do menu lateral (Sidebar) */
 .sidebar {
   width: 250px;
   height: 100vh;
@@ -26,6 +28,7 @@ body {
   flex-direction: column;
 }
 
+/* Logotipo/Título dentro do menu lateral */
 .sidebar-brand {
   padding: 20px;
   font-size: 1.5rem;
@@ -34,11 +37,13 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Container dos links de navegação */
 .sidebar-nav {
   flex-grow: 1;
   padding: 20px 0;
 }
 
+/* Estilo de cada link do menu */
 .sidebar-nav a {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
@@ -47,6 +52,7 @@ body {
   transition: 0.3s;
 }
 
+/* Efeito ao passar o mouse ou quando o link está ativo */
 .sidebar-nav a:hover,
 .sidebar-nav a.active {
   color: white;
@@ -54,7 +60,7 @@ body {
   border-left: 4px solid var(--secondary-color);
 }
 
-/* Main Content */
+/* Área de conteúdo principal (lado direito do menu) */
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px);
@@ -62,6 +68,7 @@ body {
   padding: 30px;
 }
 
+/* Barra superior branca dentro do conteúdo */
 .top-navbar {
   background: white;
   padding: 15px 30px;
@@ -73,19 +80,20 @@ body {
   align-items: center;
 }
 
-/* Cards e Tabelas */
+/* Estilização geral para os cards (caixas de conteúdo) */
 .card {
   border: none;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
+/* Cabeçalho das tabelas de dados */
 .table thead {
   background-color: var(--primary-color);
   color: white;
 }
 
-/* Auth Pages */
+/* Estilos específicos para as páginas de Login (Auth) */
 .auth-wrapper {
   height: 100vh;
   width: 100%;
@@ -99,6 +107,7 @@ body {
   );
 }
 
+/* Card centralizado da tela de login */
 .auth-card {
   background: white;
   padding: 40px;

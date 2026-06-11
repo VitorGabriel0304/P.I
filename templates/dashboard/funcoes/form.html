@@ -1,9 +1,11 @@
 {% extends "base_dashboard.html" %}
 {% block content %}
+<!-- Layout centralizado para o formulário -->
 <div class="row justify-content-center">
   <div class="col-md-8">
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-white py-3">
+        <!-- Título muda dependendo se é cadastro ou edição -->
         <h5 class="mb-0">
           {% if modo == 'cadastrar' %}
             <i class="bi bi-plus-lg"></i> Cadastrar Nova Função
@@ -13,19 +15,24 @@
         </h5>
       </div>
       <div class="card-body">
+        <!-- Formulário que envia os dados via POST para o servidor -->
         <form method="POST">
+          <!-- Campo para o nome da função -->
           <div class="mb-3">
             <label class="form-label">Nome da Função</label>
             <input type="text" name="nome" class="form-control" value="{{ item.nome if item else '' }}" required />
           </div>
+          <!-- Campo para a descrição da função -->
           <div class="mb-3">
             <label class="form-label">Descrição</label>
             <textarea name="descricao" class="form-control" rows="3">{{ item.descricao if item else '' }}</textarea>
           </div>
           
+          <!-- Seção de permissões com checkboxes -->
           <div class="card bg-light border-0 mb-3">
             <div class="card-body">
               <h6 class="card-title mb-3"><i class="bi bi-lock"></i> Permissões</h6>
+              <!-- Permissão para gerenciar o acervo -->
               <div class="form-check mb-2">
                 <input class="form-check-input" type="checkbox" name="gerenciar_livros" id="gerenciar_livros" 
                   {{ 'checked' if item and item.gerenciar_livros else '' }} />
@@ -33,6 +40,7 @@
                   Gerenciar Livros
                 </label>
               </div>
+              <!-- Permissão para gerenciar os usuários do sistema -->
               <div class="form-check mb-2">
                 <input class="form-check-input" type="checkbox" name="gerenciar_usuarios" id="gerenciar_usuarios" 
                   {{ 'checked' if item and item.gerenciar_usuarios else '' }} />
@@ -40,6 +48,7 @@
                   Gerenciar Usuários
                 </label>
               </div>
+              <!-- Permissão para gerenciar retiradas e devoluções -->
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="gerenciar_emprestimos" id="gerenciar_emprestimos" 
                   {{ 'checked' if item and item.gerenciar_emprestimos else '' }} />
@@ -50,6 +59,7 @@
             </div>
           </div>
 
+          <!-- Botões para voltar ou salvar as alterações -->
           <div class="mt-4 d-flex justify-content-between">
             <a href="{{ url_for('funcoes_listar') }}" class="btn btn-light">Voltar</a>
             <button type="submit" class="btn btn-primary px-4">Salvar Função</button>

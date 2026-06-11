@@ -1,11 +1,14 @@
 {% extends "base_dashboard.html" %} {% block content %}
+<!-- Cabeçalho da página com título e botão de cadastro -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h3><i class="bi bi-shield-check"></i> Gestão de Funções</h3>
+  <!-- Link para abrir o formulário de nova função -->
   <a href="{{ url_for('funcoes_cadastrar') }}" class="btn btn-primary btn-sm"
     ><i class="bi bi-plus-lg"></i> Nova Função</a
   >
 </div>
 
+<!-- Tabela para listar todas as funções do banco -->
 <div class="card border-0 shadow-sm">
   <div class="card-body p-0">
     <table class="table table-hover mb-0">
@@ -19,11 +22,13 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Percorre a lista de funções enviada pelo Flask -->
         {% for item in dados %}
         <tr>
           <td><strong>{{ item.nome }}</strong></td>
           <td>{{ item.descricao or '-' }}</td>
           <td>
+            <!-- Badge colorida dependendo do status -->
             {% if item.status == 'Ativo' %}
             <span class="badge bg-success">Ativo</span>
             {% else %}
@@ -31,6 +36,7 @@
             {% endif %}
           </td>
           <td>
+            <!-- Lista de permissões que esta função possui -->
             <small>
               {% if item.gerenciar_livros %}<span class="badge bg-info"
                 >Livros</span
@@ -44,11 +50,13 @@
             </small>
           </td>
           <td>
+            <!-- Botão para editar a função -->
             <a
               href="{{ url_for('funcoes_editar', id=item.id_funcao) }}"
               class="btn btn-warning btn-sm"
               ><i class="bi bi-pencil"></i
             ></a>
+            <!-- Formulário para deletar a função com confirmação -->
             <form
               method="POST"
               action="{{ url_for('funcoes_excluir', id=item.id_funcao) }}"
@@ -61,7 +69,9 @@
             </form>
           </td>
         </tr>
-        {% endfor %} {% if not dados %}
+        {% endfor %} 
+        <!-- Mensagem caso a tabela esteja vazia -->
+        {% if not dados %}
         <tr>
           <td colspan="5" class="text-center p-4 text-muted">
             Nenhuma função cadastrada.

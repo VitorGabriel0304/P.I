@@ -1,5 +1,6 @@
 {% extends "base_dashboard.html" %}
 {% block content %}
+<!-- Layout centralizado para o formulário de novo empréstimo -->
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card border-0 shadow-sm">
@@ -7,7 +8,9 @@
                 <h5 class="mb-0">Registrar Novo Empréstimo</h5>
             </div>
             <div class="card-body">
+                <!-- Formulário que envia os dados via POST para o servidor -->
                 <form method="POST">
+                    <!-- Seleção do livro que será emprestado -->
                     <div class="mb-3">
                         <label class="form-label">Selecionar Livro Disponível</label>
                         <select name="livro_id" class="form-select" required>
@@ -17,6 +20,7 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <!-- Seleção do usuário que está pegando o livro -->
                     <div class="mb-3">
                         <label class="form-label">Selecionar Usuário/Leitor</label>
                         <select name="usuario_id" class="form-select" required>
@@ -26,10 +30,12 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <!-- Definição de quantos dias o usuário terá para devolver -->
                     <div class="mb-3">
                         <label class="form-label">Prazo de Devolução (Dias)</label>
                         <input type="number" name="dias" class="form-control" value="7" min="1" max="30">
                     </div>
+                    <!-- Botões para voltar à lista ou confirmar o registro -->
                     <div class="mt-4 d-flex justify-content-between">
                         <a href="{{ url_for('emprestimos_listar') }}" class="btn btn-light">Voltar</a>
                         <button type="submit" class="btn btn-success px-4">Confirmar Empréstimo</button>

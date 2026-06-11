@@ -1,4 +1,5 @@
 {% extends "base_dashboard.html" %} {% block content %}
+<!-- Cabeçalho da página com título e link para novo cadastro -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h3><i class="bi bi-people"></i> Gestão de Usuários</h3>
   <a href="{{ url_for('usuarios_cadastrar') }}" class="btn btn-primary btn-sm"
@@ -6,6 +7,7 @@
   >
 </div>
 
+<!-- Tabela para exibição dos usuários cadastrados -->
 <div class="card border-0 shadow-sm">
   <div class="card-body p-0">
     <table class="table table-hover mb-0">
@@ -20,15 +22,18 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Loop que percorre a lista de usuários vinda do Flask -->
         {% for item in dados %}
         <tr>
           <td><strong>{{ item.nome }}</strong></td>
           <td>{{ item.email }}</td>
           <td>{{ item.cpf }}</td>
           <td>
+            <!-- Badge mostrando a função/cargo do usuário -->
             <span class="badge bg-secondary">{{ item.funcao_nome }}</span>
           </td>
           <td>
+            <!-- Badge colorida para indicar se o usuário está ativo -->
             {% if item.status == 'Ativo' %}
             <span class="badge bg-success">Ativo</span>
             {% else %}
@@ -36,11 +41,13 @@
             {% endif %}
           </td>
           <td>
+            <!-- Botão para abrir o formulário de edição -->
             <a
               href="{{ url_for('usuarios_editar', id=item.id_usuario) }}"
               class="btn btn-warning btn-sm"
               ><i class="bi bi-pencil"></i
             ></a>
+            <!-- Formulário para deletar o usuário com confirmação em JS -->
             <form
               method="POST"
               action="{{ url_for('usuarios_excluir', id=item.id_usuario) }}"
@@ -53,7 +60,9 @@
             </form>
           </td>
         </tr>
-        {% endfor %} {% if not dados %}
+        {% endfor %} 
+        <!-- Mensagem exibida caso não haja nenhum usuário na lista -->
+        {% if not dados %}
         <tr>
           <td colspan="6" class="text-center p-4 text-muted">
             Nenhum usuário cadastrado.
