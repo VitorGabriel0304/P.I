@@ -39,3 +39,14 @@ CREATE TABLE IF NOT EXISTS livros (
 );
 
 -- (Rhian)
+CREATE TABLE IF NOT EXISTS emprestimos (
+    id_emprestimo BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    livro_id BIGINT UNSIGNED NOT NULL,
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    data_retirada DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_prevista_devolucao DATETIME NOT NULL,
+    data_devolucao_real DATETIME NULL,
+    status ENUM('Ativo', 'Devolvido', 'Atrasado') DEFAULT 'Ativo',
+    CONSTRAINT fk_emprestimo_livro FOREIGN KEY (livro_id) REFERENCES livros (id_livro),
+    CONSTRAINT fk_emprestimo_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id_usuario)
+);
